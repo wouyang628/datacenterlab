@@ -12,10 +12,10 @@ bms01
 ```
 [root@bms-01 network-scripts]# cat ifcfg-ens3f1
 DEVICE=ens3f1
-BOOTPROTO=none
+BOOTPROTO=static
 ONBOOT=yes
 PREFIX=24
-IPADDR=10.10.0.10
+IPADDR=10.10.0.11
 
 [root@bms-01 network-scripts]# service network restart
 ```
@@ -23,13 +23,31 @@ bms02
 ```
 [root@bms-02 network-scripts]# cat ifcfg-ens3f1
 DEVICE=ens3f1
-BOOTPROTO=none
+BOOTPROTO=static
 ONBOOT=yes
 PREFIX=24
-IPADDR=10.10.0.11
+IPADDR=10.11.0.21
 
 [root@bms-02 network-scripts]# service network restart
 ```
+
+bms03
+```
+[root@bms-03 network-scripts]# cat ifcfg-ens3f1
+DEVICE=ens3f1
+BOOTPROTO=none
+ONBOOT=yes
+PREFIX=24
+IPADDR=10.10.0.31
+
+[root@bms-03 network-scripts]# service network restart
+```
+
+
+
+
+
+
 
 bms01 can ping bms02
 ```
