@@ -1,0 +1,6 @@
+spine-01 ansible_host=10.49.11.14
+spine-02 ansible_host=10.49.1.1
+leaf-01 ansible_host=10.49.0.98
+leaf-02 ansible_host=10.49.0.238
+leaf-03 ansible_host=10.49.0.231
+leaf-04 ansible_host=10.49.0.228
