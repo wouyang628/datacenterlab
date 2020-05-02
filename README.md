@@ -58,3 +58,18 @@ PING 10.10.0.11 (10.10.0.11) 56(84) bytes of data.
 64 bytes from 10.10.0.11: icmp_seq=3 ttl=64 time=105 ms
 64 bytes from 10.10.0.11: icmp_seq=4 ttl=64 time=109 ms
 ```
+
+
+# use ansible to save and load the configs
+```
+
+sudo yum install epel-release
+sudo yum repolist
+sudo yum install ansible
+ansible-galaxy install Juniper.junos
+
+sudo easy_install pip
+pip install junos-eznc (not sure why sudo pip install junos-eznc not working)
+pip install jxmlease
+
+```
