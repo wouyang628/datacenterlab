@@ -73,3 +73,8 @@ pip install junos-eznc (not sure why sudo pip install junos-eznc not working)
 pip install jxmlease
 
 ```
+
+mac:
+```
+export PATH=$PATH:/Users/wouyang/Library/Python/2.7/bin/
+```
