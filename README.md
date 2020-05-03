@@ -78,3 +78,62 @@ mac:
 ```
 export PATH=$PATH:/Users/wouyang/Library/Python/2.7/bin/
 ```
+
+
+
+# note
+1.  the jinja template does not work when using . instead of "" format 
+e.g. this one does not work, when there is ether-switching:
+```
+#jinja2: lstrip_blocks: True
+interfaces {
+  {% for interface in interfaces %}
+    {{ interface.name }} {
+      {% for unit in interface.unit %}
+        unit {{ unit.number }} {
+            family {{ unit.address_family }} {
+              {% if unit.address_family == "inet" %}
+                address {{ unit.ip_address }};
+              {% elif unit.address_family == "ethernet-switching" %}
+                interface-mode {{ unit.interface-mode }};
+                vlan {
+                    members {{ unit.vlan_members }};
+                }
+              {% endif %}
+                description {{ unit.description }};
+            }
+        }
+      {% endfor %}
+    }
+  {% endfor %}
+}
+
+error:
+fatal: [leaf-01]: FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: 'dict object' has no attribute 'interface'"}
+```
+
+this one works:
+```
+#jinja2: lstrip_blocks: True
+interfaces {
+  {% for interface in interfaces %}
+    {{ interface["name"] }} {
+      {% for unit in interface["unit"] %}
+        unit {{ unit["number"] }} {
+            family {{ unit["address_family’] }} {
+              {% if unit["address_family"] == "inet" %}
+                address {{ unit["ip_address’] }};
+              {% elif unit["address_family"] == "ethernet-switching" %}
+                interface-mode {{ unit["interface-mode"] }};
+                vlan {
+                    members {{ unit["vlan_members"] }};
+                }
+              {% endif %}
+                description {{ unit["description"] }};
+            }
+        }
+      {% endfor %}
+    }
+  {% endfor %}
+}
+```
