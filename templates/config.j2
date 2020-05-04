@@ -1,0 +1,50 @@
+#jinja2: lstrip_blocks: True
+interfaces {
+  {% for interface in interfaces %}
+    {{ interface["name"] }} {
+      {% for unit in interface["unit"] %}
+        unit {{ unit["number"] }} {
+            family {{ unit["address_family"] }} {
+              {% if unit["address_family"] == "inet" %}
+                address {{ unit["ip_address"] }};
+              {% elif unit["address_family"] == "ethernet-switching" %}
+                interface-mode {{ unit["interface-mode"] }};
+                vlan {
+                    members {{ unit["vlan_members"] }};
+                }
+              {% endif %}
+                description {{ unit["description"] }};
+            }
+        }
+      {% endfor %}
+    }
+  {% endfor %}
+}
+
+protocols {
+    bgp {
+        group underlay {
+            type external;
+            export send-direct;
+            multipath;
+            {% for neighbor in underlay["neighbors"] %}
+            neighbor {{ neighbor["neighbor_address"]}} {
+                peer-as {{ neighbor["neighbor_as"]}};
+                description {{ neighbor["description"]}};
+            }
+            {% endfor %}
+        }    
+    }
+}
+
+policy-options {
+    policy-statement send-direct {
+        term 10 {
+            from {
+                protocol direct;
+                route-filter 10.0.0.0/8 orlonger;
+            }
+            then accept;
+        }
+    }
+}

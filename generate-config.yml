@@ -1,0 +1,26 @@
+---
+- name: generate and install config
+  hosts:
+    - all
+  roles:
+    - Juniper.junos
+  connection: local
+  gather_facts: no
+
+  vars:
+    tmp_dir: "tmp"
+    config_file: "{{ tmp_dir }}/{{ inventory_hostname }}.conf"
+
+  tasks:
+    - debug: var=tmp_dir
+    - debug: var=config_file
+
+    - name: confirm and create config directory
+      file:
+        path: "{{ tmp_dir }}"
+        state: directory
+
+    - name: build the config
+      template:
+        src: templates/config.j2
+        dest: "{{ config_file }}"

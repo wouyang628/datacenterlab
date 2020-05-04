@@ -1,4 +1,15 @@
 ---
+- name: timestamp create
+  hosts:
+    - localhost
+  connection: local
+  gather_facts: yes
+
+  tasks:
+    - name: save timestamp
+      set_fact:
+        timestamp: "{{ ansible_date_time.date }}_{{ ansible_date_time.time | replace(':', '-') }}"
+
 - name: save configurations from device
   hosts:
     - all
@@ -8,12 +19,12 @@
   gather_facts: no
 
   vars:
-    config_dir: "config_backups"
+    config_dir: "config_backups/{{ hostvars.localhost.timestamp }}"
     config_filename: "{{ config_dir }}/{{ inventory_hostname }}.conf"
     connection_settings:
       host: "{{ ansible_host }}"
       user: edi
-      passwd: ****
+      passwd: Embe1mpls
 
   tasks:
     - name: create config back directory

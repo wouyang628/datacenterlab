@@ -1,0 +1,31 @@
+---
+interfaces:
+  - name: xe-0/0/0
+    unit:
+      - number: 0
+        address_family: inet
+        ip_address: 10.0.0.11/31
+        description: connecting to spine-02
+  - name: xe-0/0/1
+    unit:
+      - number: 0
+        address_family: inet
+        ip_address: 10.0.0.3/31
+        description: connecting to spine-01
+  - name: lo0
+    unit:
+      - number: 0
+        address_family: inet
+        ip_address: 10.2.0.2/32
+        description: loopback address
+
+as: 66002
+underlay:
+  protocols: ebgp
+  neighbors:
+    - neighbor_address: 10.0.0.2
+      neighbor_as: 65001
+      description: to-spine-01
+    - neighbor_address: 10.0.0.10
+      neighbor_as: 65002
+      description: to-spine-02
