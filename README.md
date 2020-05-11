@@ -142,3 +142,10 @@ interfaces {
 ### For JCL
 
 The vQFX is running inside the CentOS VM. You can do a 'virsh console vqfx-re' to get into the console
+
+ spine-01 100.123.13.101/16
+ spine-02 100.123.13.102/16
+ leaf-01 100.123.13.201/16
+ leaf-02 100.123.13.202/16
+ 
+ 
