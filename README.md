@@ -137,3 +137,8 @@ interfaces {
   {% endfor %}
 }
 ```
+
+
+### For JCL
+
+The vQFX is running inside the CentOS VM. You can do a 'virsh console vqfx-re' to get into the console
