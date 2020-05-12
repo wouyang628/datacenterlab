@@ -138,6 +138,14 @@ interfaces {
 }
 ```
 
+### contrial command server set up
+
+```
+vi /etc/ssh/sshd_config
+PasswordAuthentication yes
+
+systemctl restart sshd.service
+```
 
 ### For JCL
 
