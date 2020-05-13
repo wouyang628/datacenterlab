@@ -1,8 +1,9 @@
 # datacentertopovmm
 
 ```
-vmm stop (wasn’t necessary all were unbound
-vmm unbind (ditto)
+vmm capacity -g vmm-default
+vmm stop
+vmm unbind 
 vmm config datacenter_vmm_conf.conf -g vmm-default
 vmm bind
 vmm start
@@ -139,14 +140,129 @@ interfaces {
 ```
 
 ### contrial command server set up
+em0-->external0-->eth0
+em1-->ens3f1
+em2-->
 
 ```
+contrail command
+[root@contrail-command network-scripts]# vi /etc/sysconfig/network-scripts/ifcfg-ens3f1
+DEVICE=ens3f1
+BOOTPROTO=static
+ONBOOT=yes
+PREFIX=24
+IPADDR=172.16.16.11
+[root@contrail-command network-scripts]# service network restart
+```
+```
+[root@aio-openstack-contrail ~]# vi /etc/sysconfig/network-scripts/ifcfg-ens3f1
+DEVICE=ens3f1
+BOOTPROTO=static
+ONBOOT=yes
+PREFIX=24
+IPADDR=172.16.16.12
+[root@aio-openstack-contrail ~]# service network restart
+```
+```
+[root@contrail-compute ~]# vi /etc/sysconfig/network-scripts/ifcfg-ens3f1
+DEVICE=ens3f1
+BOOTPROTO=static
+ONBOOT=yes
+PREFIX=24
+IPADDR=172.16.16.13
+[root@contrail-compute ~]# service network restart
+```
+```
+[root@appformix ~]# vi /etc/sysconfig/network-scripts/ifcfg-ens3f1
+DEVICE=ens3f1
+BOOTPROTO=static
+ONBOOT=yes
+PREFIX=24
+IPADDR=172.16.16.14
+[root@appformix ~]# service network restart
+```
+
+```
+
 vi /etc/ssh/sshd_config
 PasswordAuthentication yes
 
 systemctl restart sshd.service
-```
 
+passwd 
+```
+```
+[root@contrail-command ~]# cat command_servers.yml
+---
+# Required for Appformix installations
+user_command_volumes:
+- /opt/software/appformix:/opt/software/appformix
+- /opt/software/xflow:/opt/software/xflow
+command_servers:
+    server1:
+        ip: 10.53.72.222  # IP address of server where you want to install Contrail Command
+        connection: ssh
+        ssh_user: root
+        ssh_pass: c0ntrail123
+        sudo_pass: c0ntrail123
+        ntpserver: 66.129.233.81
+
+        registry_insecure: false
+        container_registry: hub.juniper.net/contrail
+        container_tag: 2003.1.40-rhel
+        container_registry_username: JNPR-FieldUser419
+        container_registry_password: TGbZvQ1QTcpPQtfYA0Rp
+        config_dir: /etc/contrail
+
+        contrail_config:
+            database:
+                type: postgres
+                dialect: postgres
+                password: contrail123
+            keystone:
+                assignment:
+                    data:
+                      users:
+                        admin:
+                          password: contrail123
+            insecure: true
+            client:
+              password: contrail123
+```
+```
+yum install -y yum-utils device-mapper-persistent-data lvm2
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum install -y docker-ce-18.06.0.ce
+systemctl start docker
+docker login hub.juniper.net --username JNPR-FieldUser419 --password TGbZvQ1QTcpPQtfYA0Rp
+docker pull hub.juniper.net/contrail/contrail-command-deployer:2003.1.40-rhel
+docker run -td --net host -v /root/command_servers.yml:/command_servers.yml --privileged --name contrail_command_deployer hub.juniper.net/contrail/contrail-command-deployer:2003.1.40-rhel
+docker logs -f contrail_command_deployer
+```
+```
+cd /opt/software/appformix/
+yum install wget
+wget http://dl.appformix.juniper.net/releases/v3.1.15/appformix-3.1.15.tar.gz
+wget http://dl.appformix.juniper.net/releases/v3.1.15/appformix-dependencies-images-3.1.15.tar.gz
+wget http://dl.appformix.juniper.net/releases/v3.1.15/appformix-network_device-images-3.1.15.tar.gz
+wget http://dl.appformix.juniper.net/releases/v3.1.15/appformix-openstack-images-3.1.15.tar.gz
+wget http://dl.appformix.juniper.net/releases/v3.1.15/appformix-platform-images-3.1.15.tar.gz
+cd /opt/software/xflow/
+wget http://dl.appformix.juniper.net/appformix_flows/releases/v1.0.7/appformix-flows-1.0.7.tar.gz
+wget http://dl.appformix.juniper.net/appformix_flows/releases/v1.0.7/appformix-flows-ansible-1.0.7.tar.gz
+```
+defautl vrouter gateway 11.11.0.1
+
+You can check provisioning logs from contrail_command container by 
+```
+docker logs -f contrail_command
+
+OR
+
+docker exec contrail_command tail -f /var/log/contrail/deploy.log
+docker exec -it contrail_command /bin/sh
+Contrail Command GUI creates instances.yml file used for cluster provisioning at following location "/var/tmp/contrail_cluster/Cluster-UUID/". Please check and review.
+```
 ### For JCL
 
 The vQFX is running inside the CentOS VM. You can do a 'virsh console vqfx-re' to get into the console
