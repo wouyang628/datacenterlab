@@ -263,6 +263,94 @@ docker exec contrail_command tail -f /var/log/contrail/deploy.log
 docker exec -it contrail_command /bin/sh
 Contrail Command GUI creates instances.yml file used for cluster provisioning at following location "/var/tmp/contrail_cluster/Cluster-UUID/". Please check and review.
 ```
+```
+global_configuration:
+  CONTAINER_REGISTRY: hub.juniper.net/contrail
+  REGISTRY_PRIVATE_INSECURE: false
+  CONTAINER_REGISTRY_USERNAME: JNPR-FieldUser419
+  CONTAINER_REGISTRY_PASSWORD: TGbZvQ1QTcpPQtfYA0Rp
+provider_config:
+  bms:
+    ssh_user: root
+    ssh_pwd: c0ntrail123
+    ntpserver: 66.129.233.81
+    domainsuffix: local
+instances:
+  aio-openstack-contrail:
+    ip: 10.53.72.222
+    ssh_user: root
+    ssh_pwd: c0ntrail123
+    provider: bms
+    roles:
+      config:
+      config_database:
+      control:
+      webui:
+      analytics:
+      analytics_database:
+      analytics_alarm:
+      analytics_snmp:
+      vrouter:
+        TSN_EVPN_MODE: true
+        VROUTER_GATEWAY: 11.11.0.1
+      openstack_control:
+      openstack_network:
+      openstack_storage:
+      openstack_monitoring:
+      appformix_openstack_controller:
+      appformix_bare_host:
+  contrail-compute:
+    ip: 10.53.72.221
+    ssh_user: root
+    ssh_pwd: c0ntrail123
+    provider: bms
+    roles:
+      vrouter:
+        VROUTER_GATEWAY: 11.11.0.1
+      openstack_compute:
+      appformix_compute:
+      appformix_bare_host:
+  appformix:
+    ip: 10.53.72.220
+    provider: bms
+    roles:
+      appformix_controller:
+contrail_configuration:
+  CONTRAIL_VERSION: "2003.1.40-rhel"
+  CLOUD_ORCHESTRATOR: openstack
+  RABBITMQ_NODE_PORT: 5673
+  VROUTER_GATEWAY: 11.11.0.1
+  ENCAP_PRIORITY: VXLAN,MPLSoUDP,MPLSoGRE
+  OPENSTACK_VERSION: queens
+  AUTH_MODE: keystone
+  KEYSTONE_AUTH_HOST: 10.53.72.222
+  KEYSTONE_AUTH_URL_VERSION: /v3
+  CONTROL_NODES: 172.16.16.12
+  PHYSICAL_INTERFACE: ens3f1
+  TSN_NODES: 172.16.16.12
+  CONTRAIL_CONTAINER_TAG: "2003.1.40-rhel"
+kolla_config:
+  kolla_globals:
+    enable_haproxy: no
+    enable_haproxy: no
+    enable_ironic: no
+    enable_swift: yes
+    openstack_release: queens
+    swift_disk_partition_size: 20GB
+  kolla_passwords:
+    keystone_admin_password: contrail123
+  customize:
+    swift-proxy-server/proxy-server.conf: |
+      [filter:authtoken]
+      service_token_roles_required = True
+      service_token_roles = admin
+    nova.conf: |
+             [libvirt]
+             virt_type=qemu
+             cpu_mode=none
+appformix_configuration:
+    appformix_license:  /opt/software/appformix/appformix-internal-openstack-3.1.sig
+```
 ### For JCL
 
 The vQFX is running inside the CentOS VM. You can do a 'virsh console vqfx-re' to get into the console
