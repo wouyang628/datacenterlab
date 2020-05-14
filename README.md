@@ -250,7 +250,7 @@ command_servers:
 ```
 yum install -y yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-yum install -y docker-ce-18.06.0.ceyum install -y docker-ce-18.06.0.ce
+yum install -y docker-ce-18.06.0.ce
 systemctl start docker
 check docker version (it happened that the version showed as 18.03 and will not work)
 ```
