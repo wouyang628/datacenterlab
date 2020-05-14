@@ -140,10 +140,19 @@ interfaces {
 ```
 
 ### contrial command server set up
+Before you begin, set up servers and/or VMs that meet the specified requirements. Also ensure that the Contrail Command server and all the hosts in the Contrail cluster have /etc/hosts entries for each other over the management network.
+
 em0-->external0-->eth0
 em1-->ens3f1
 em2-->
-
+```
+etc/hosts
+10.53.68.75    contrail-command
+10.53.72.222    aio-openstack-contrail
+10.53.72.221    contrail-compute
+10.53.72.220    appformix
+10.53.72.22    appformixflows
+```
 ```
 contrail command
 [root@contrail-command network-scripts]# vi /etc/sysconfig/network-scripts/ifcfg-ens3f1
@@ -181,6 +190,15 @@ PREFIX=24
 IPADDR=172.16.16.14
 [root@appformix ~]# service network restart
 ```
+```
+[root@appformixflows ~]# vi /etc/sysconfig/network-scripts/ifcfg-ens3f1
+DEVICE=ens3f1
+BOOTPROTO=static
+ONBOOT=yes
+PREFIX=24
+IPADDR=172.16.16.15
+[root@appformix ~]# service network restart
+```
 
 ```
 
@@ -200,7 +218,7 @@ user_command_volumes:
 - /opt/software/xflow:/opt/software/xflow
 command_servers:
     server1:
-        ip: 10.53.72.222  # IP address of server where you want to install Contrail Command
+        ip: 10.53.68.75
         connection: ssh
         ssh_user: root
         ssh_pass: c0ntrail123
@@ -232,13 +250,36 @@ command_servers:
 ```
 yum install -y yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-yum install -y docker-ce-18.06.0.ce
+yum install -y docker-ce-18.06.0.ceyum install -y docker-ce-18.06.0.ce
 systemctl start docker
+check docker version (it happened that the version showed as 18.03 and will not work)
+```
+[root@contrail-command ~]# docker version
+Client:
+ Version:           18.06.0-ce
+ API version:       1.38
+ Go version:        go1.10.3
+ Git commit:        0ffa825
+ Built:             Wed Jul 18 19:08:18 2018
+ OS/Arch:           linux/amd64
+ Experimental:      false
+
+Server:
+ Engine:
+  Version:          18.06.0-ce
+  API version:      1.38 (minimum version 1.12)
+  Go version:       go1.10.3
+  Git commit:       0ffa825
+  Built:            Wed Jul 18 19:10:42 2018
+  OS/Arch:          linux/amd64
+  Experimental:     false
+```
 docker login hub.juniper.net --username JNPR-FieldUser419 --password TGbZvQ1QTcpPQtfYA0Rp
 docker pull hub.juniper.net/contrail/contrail-command-deployer:2003.1.40-rhel
 docker run -td --net host -v /root/command_servers.yml:/command_servers.yml --privileged --name contrail_command_deployer hub.juniper.net/contrail/contrail-command-deployer:2003.1.40-rhel
 docker logs -f contrail_command_deployer
 ```
+
 ```
 cd /opt/software/appformix/
 yum install wget
@@ -262,6 +303,9 @@ OR
 docker exec contrail_command tail -f /var/log/contrail/deploy.log
 docker exec -it contrail_command /bin/sh
 Contrail Command GUI creates instances.yml file used for cluster provisioning at following location "/var/tmp/contrail_cluster/Cluster-UUID/". Please check and review.
+```
+```
+
 ```
 ```
 global_configuration:
@@ -313,8 +357,9 @@ instances:
   appformix:
     ip: 10.53.72.220
     provider: bms
-    roles:
       appformix_controller:
+      appformix_bare_host:
+      appformix_network_agents:
 contrail_configuration:
   CONTRAIL_VERSION: "2003.1.40-rhel"
   CLOUD_ORCHESTRATOR: openstack
@@ -325,9 +370,9 @@ contrail_configuration:
   AUTH_MODE: keystone
   KEYSTONE_AUTH_HOST: 10.53.72.222
   KEYSTONE_AUTH_URL_VERSION: /v3
-  CONTROL_NODES: 172.16.16.12
-  PHYSICAL_INTERFACE: ens3f1
-  TSN_NODES: 172.16.16.12
+  CONTROL_NODES: 172.16.16.12  #######diff
+  PHYSICAL_INTERFACE: ens3f1  ######diff
+  TSN_NODES: 172.16.16.12   #######diff
   CONTRAIL_CONTAINER_TAG: "2003.1.40-rhel"
 kolla_config:
   kolla_globals:
@@ -350,6 +395,9 @@ kolla_config:
              cpu_mode=none
 appformix_configuration:
     appformix_license:  /opt/software/appformix/appformix-internal-openstack-3.1.sig
+```
+```
+docker run -td --net host -e action=provision_cluster -v /root/command_servers.yml:/command_servers.yml -v /root/instances.yml:/instances.yml --privileged --name contrail_command_deployer hub.juniper.net/contrail/contrail-command-deployer:2003.1.40-rhel
 ```
 ### For JCL
 
