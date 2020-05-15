@@ -275,8 +275,8 @@ Server:
   Experimental:     false
 ```
 docker login hub.juniper.net --username JNPR-FieldUser419 --password TGbZvQ1QTcpPQtfYA0Rp
-docker pull hub.juniper.net/contrail/contrail-command-deployer:2003.1.40-rhel
-docker run -td --net host -v /root/command_servers.yml:/command_servers.yml --privileged --name contrail_command_deployer hub.juniper.net/contrail/contrail-command-deployer:2003.1.40-rhel
+docker pull hub.juniper.net/contrail/contrail-command-deployer:2003.1.40
+docker run -td --net host -v /root/command_servers.yml:/command_servers.yml --privileged --name contrail_command_deployer hub.juniper.net/contrail/contrail-command-deployer:2003.1.40
 docker logs -f contrail_command_deployer
 ```
 
@@ -303,6 +303,7 @@ OR
 docker exec contrail_command tail -f /var/log/contrail/deploy.log
 docker exec -it contrail_command /bin/sh
 Contrail Command GUI creates instances.yml file used for cluster provisioning at following location "/var/tmp/contrail_cluster/Cluster-UUID/". Please check and review.
+docker cp contrail_command:/var/log/contrail/deploy.log ./
 ```
 ```
 
@@ -397,7 +398,7 @@ appformix_configuration:
     appformix_license:  /opt/software/appformix/appformix-internal-openstack-3.1.sig
 ```
 ```
-docker run -td --net host -e action=provision_cluster -v /root/command_servers.yml:/command_servers.yml -v /root/instances.yml:/instances.yml --privileged --name contrail_command_deployer hub.juniper.net/contrail/contrail-command-deployer:2003.1.40-rhel
+docker run -td --net host -e action=provision_cluster -v /root/command_servers.yml:/command_servers.yml -v /root/instances.yml:/instances.yml --privileged --name contrail_command_deployer hub.juniper.net/contrail/contrail-command-deployer:2003.33
 ```
 ### For JCL
 
