@@ -1,9 +1,16 @@
+[QFX]
 spine-01 ansible_host=10.49.11.14
 spine-02 ansible_host=10.49.1.1
 leaf-01 ansible_host=10.49.0.98
 leaf-02 ansible_host=10.49.0.238
 leaf-03 ansible_host=10.49.0.231
 leaf-04 ansible_host=10.49.0.228
+
+[SERVERS]
+contrail-command ansible_host=10.53.72.123
+aio-openstack-contrail ansible_host=10.53.72.122
+contrail-compute ansible_host=10.53.72.12
+appformix ansible_host=10.53.72.119
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python

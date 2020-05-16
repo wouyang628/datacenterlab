@@ -1,31 +1,57 @@
 ---
+role: leaf
+router_id: 11.2.0.2
 interfaces:
   - name: xe-0/0/0
     unit:
       - number: 0
         address_family: inet
-        ip_address: 10.0.0.11/31
+        ip_address: 11.0.0.11/31
         description: connecting to spine-02
   - name: xe-0/0/1
     unit:
       - number: 0
         address_family: inet
-        ip_address: 10.0.0.3/31
+        ip_address: 11.0.0.3/31
         description: connecting to spine-01
   - name: lo0
     unit:
       - number: 0
         address_family: inet
-        ip_address: 10.2.0.2/32
+        ip_address: 11.2.0.2/32
         description: loopback address
 
 as: 66002
 underlay:
   protocols: ebgp
   neighbors:
-    - neighbor_address: 10.0.0.2
+    - neighbor_address: 11.0.0.2
       neighbor_as: 65001
       description: to-spine-01
-    - neighbor_address: 10.0.0.10
+    - neighbor_address: 11.0.0.10
       neighbor_as: 65002
       description: to-spine-02
+overlay:
+  protocls: ibgp
+  route-reflector: no
+  overlay-as: 65005
+  local-address: 11.2.0.2
+  neighbors:
+    - neighbor_address: 11.1.0.1
+      description: to-spine-01
+    - neighbor_address: 11.1.0.2
+      description: to-spine-02
+
+vlans:
+  - vlan_name: vlan100
+    vlan_id: 100
+    vxlan_vni: 100
+    ingress-node-replication: yes
+  - vlan_name: vlan200
+    vlan_id: 200
+    vxlan_vni: 200
+    ingress-node-replication: yes
+
+communities:
+  - community_name: cust100
+    community_member: target:10001:1

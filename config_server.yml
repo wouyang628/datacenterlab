@@ -1,0 +1,43 @@
+---
+- name: generate and install config
+  hosts:
+    - SERVERS
+  remote_user: root
+
+  vars:
+    interface_config_file: "server_config/{{ inventory_hostname }}/ifcfg-ens3f1"
+    hosts_file: "server_config/hosts"
+
+  tasks:
+    - name: config /etc/hosts
+      copy:
+        src: "{{ hosts_file }}"
+        dest: /etc/hosts     
+
+    - name: allow PasswordAuthentication
+      replace:
+        path: /etc/ssh/sshd_config
+        regexp: 'PasswordAuthentication no'
+        replace: 'PasswordAuthentication yes'
+        backup: yes
+      notify:
+        - restart sshd.service
+
+    - name: change user password
+      user:
+        name: root
+        password: $6$mysecretsalt$4SoXnWcDhsSfyVAMhoLNf6QorPl29ymaSiLknBkYP/ZaWBcbSdZm71a9rRIXHGaiiLYfHcUggT2SochddElUA1
+    
+    - name: config /etc/sysconfig/network-scripts
+      copy:
+        src: "{{ interface_config_file }}"
+        dest: /etc/sysconfig/network-scripts/ifcfg-ens3f1
+      notify:
+        - restart network
+
+  handlers:
+    - name: restart network
+      service: name=network state=restarted
+
+    - name: restart sshd.service
+      systemd: name=sshd.service state=restarted

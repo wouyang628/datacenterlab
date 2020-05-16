@@ -1,31 +1,43 @@
 ---
+role: leaf
+router_id: 11.2.0.3
 interfaces:
   - name: xe-0/0/2
     unit:
       - number: 0
         address_family: inet
-        ip_address: 10.0.0.5/31
+        ip_address: 11.0.0.5/31
         description: connecting to spine-01
   - name: xe-0/0/3
     unit:
       - number: 0
         address_family: inet
-        ip_address: 10.0.0.13/31
+        ip_address: 11.0.0.13/31
         description: connecting to spine-02
   - name: lo0
     unit:
       - number: 0
         address_family: inet
-        ip_address: 10.2.0.3/32
+        ip_address: 11.2.0.3/32
         description: loopback address
 
 as: 66003
 underlay:
   protocols: ebgp
   neighbors:
-    - neighbor_address: 10.0.0.4
+    - neighbor_address: 11.0.0.4
       neighbor_as: 65001
       description: to-spine-01
-    - neighbor_address: 10.0.0.12
+    - neighbor_address: 11.0.0.12
       neighbor_as: 65002
+      description: to-spine-02
+overlay:
+  protocls: ibgp
+  route-reflector: no
+  overlay-as: 65005
+  local-address: 11.2.0.3
+  neighbors:
+    - neighbor_address: 11.1.0.1
+      description: to-spine-01
+    - neighbor_address: 11.1.0.2
       description: to-spine-02

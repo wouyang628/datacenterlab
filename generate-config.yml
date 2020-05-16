@@ -1,7 +1,7 @@
 ---
 - name: generate and install config
   hosts:
-    - all
+    - QFX
   roles:
     - Juniper.junos
   connection: local
@@ -14,6 +14,7 @@
   tasks:
     - debug: var=tmp_dir
     - debug: var=config_file
+    - debug: var=role
 
     - name: confirm and create config directory
       file:
@@ -24,3 +25,4 @@
       template:
         src: templates/config.j2
         dest: "{{ config_file }}"
+

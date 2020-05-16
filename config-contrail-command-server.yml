@@ -1,0 +1,73 @@
+---
+- name: generate and install config
+  hosts:
+    - contrail-command
+  remote_user: root
+
+  vars:
+    appformix_license: /Users/wouyang/Documents/appformix/appformix-internal-openstack-3.1.sig
+
+  tasks:
+    - name: Install the latest version of Docker Engine
+      yum:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+        - yum-utils
+        - device-mapper-persistent-data
+        - lvm2
+        - wget
+
+    - name: set up the stable repository
+      command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+    - name: Install Docker
+      yum:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+        - docker-ce-18.06.0.ce    
+
+    - name: start docker
+      command: systemctl start docker
+
+    - name: copy command_server.yml and instances.yml to the contrail-command command_server
+      copy:
+        src: "{{ item.src }}"
+        dest: /root/
+      with_items:
+        - { src: "command_servers.yml" }
+        - { src: "instances.yml" }
+
+    - name: create directory to save appformix packages
+      file:
+        path: /opt/software/appformix
+        state: directory
+
+    - name: download appformix packages
+      get_url:
+        url: "{{ item.url }}"
+        dest: /opt/software/appformix/
+      with_items:
+        - { url: "http://dl.appformix.juniper.net/releases/v3.1.15/appformix-3.1.15.tar.gz"}
+        - { url: "http://dl.appformix.juniper.net/releases/v3.1.15/appformix-dependencies-images-3.1.15.tar.gz"}
+        - { url: "http://dl.appformix.juniper.net/releases/v3.1.15/appformix-network_device-images-3.1.15.tar.gz"}
+        - { url: "http://dl.appformix.juniper.net/releases/v3.1.15/appformix-openstack-images-3.1.15.tar.gz"}
+        - { url: "http://dl.appformix.juniper.net/releases/v3.1.15/appformix-platform-images-3.1.15.tar.gz"}
+
+    - name: upload appformix license
+      copy:
+        src: "{{ appformix_license }}"
+        dest: /opt/software/appformix/
+
+    - name: Log into DockerHub
+      docker_login:
+        registry: hub.juniper.net
+        username: JNPR-FieldUser419
+        password: $6$mysecretsalt$8NZP8yYo9fECSxnmt6y3Z14Wyw/JFNu3jPKv7Mi9P6zglhgYX7f3EUMlRirqx4Jsvd/elUk6ijrcMyFQMjCWq.
+        state: present
+
+    - name: execute the command to install
+      command: docker run -td --net host -e action=provision_cluster -v /root/command_servers.yml:/command_servers.yml -v /root/instances.yml:/instances.yml --privileged --name contrail_command_deployer hub.juniper.net/contrail/contrail-command-deployer:2003.33

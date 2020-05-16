@@ -21,6 +21,12 @@ interfaces {
   {% endfor %}
 }
 
+routing-options {
+    router-id {{ router_id }};
+    autonomous-system {{ as }};
+}
+
+
 protocols {
     bgp {
         group underlay {
@@ -28,13 +34,42 @@ protocols {
             export send-direct;
             multipath;
             {% for neighbor in underlay["neighbors"] %}
-            neighbor {{ neighbor["neighbor_address"]}} {
+            neighbor {{ neighbor["neighbor_address"] }} {
                 peer-as {{ neighbor["neighbor_as"]}};
-                description {{ neighbor["description"]}};
+                description {{ neighbor["description"] }};
             }
             {% endfor %}
-        }    
+        }
+        group overlay {
+            type internal;
+            local-address {{ overlay["local-address"] }};
+            family evpn {
+                signaling;
+            }
+            {% if overlay["route-reflector"] == "yes" %}
+            cluster {{ overlay["cluster-id"] }};
+            {% endif %}
+            local-as {{ overlay["overlay-as"] }};
+            multipath;
+            {% for neighbor in overlay["neighbors"] %}
+            neighbor {{ neighbor["neighbor_address"] }} {
+                description {{ neighbor["description"] }};
+            }
+            {% endfor %}
+        }
     }
+    {% if role == "leaf" %}
+    evpn {
+        vni-options {
+            vni 100 {
+                vrf-target target:10001:1;
+            }
+        }
+        encapsulation vxlan;
+        multicast-mode ingress-replication;
+        extended-vni-list all;
+    }
+    {% endif %}
 }
 
 policy-options {
@@ -42,9 +77,50 @@ policy-options {
         term 10 {
             from {
                 protocol direct;
-                route-filter 10.0.0.0/8 orlonger;
+                route-filter 11.0.0.0/8 orlonger;
             }
             then accept;
         }
     }
+    {% if role == "leaf" %}
+    policy-statement EVPN_VRF_IMPORT {
+        {% if communities is defined %}
+          {% for community in communities %}
+        term {{ community["community_name"] }} {
+            from community {{ community["community_name"] }};
+            then accept;
+        }
+          {% endfor %}
+        {% endif %}
+    }
+    {% endif %}
+    {% if communities is defined %}
+      {% for community in communities %}
+    community {{ community["community_name"] }} members {{ community["community_member"]}};
+      {% endfor %}
+    {% endif %}
 }
+
+switch-options {
+    vtep-source-interface lo0.0;
+    route-distinguisher {{ router_id }}:1;
+    vrf-import EVPN_VRF_IMPORT;
+    vrf-target target:65000:2;
+}
+
+
+{% if vlans is defined %}
+vlans {
+    {% for vlan in vlans %}
+    {{ vlan["vlan_name"] }} {
+        vlan-id {{ vlan["vlan_id"] }};
+        vxlan {
+            vni {{ vlan["vxlan_vni"]}};
+            {% if vlan["ingress-node-replication"] == "yes" %}
+            ingress-node-replication;
+            {% endif %}
+        }
+    }
+    {% endfor %}
+}
+{% endif %}
