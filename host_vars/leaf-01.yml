@@ -3,38 +3,28 @@ role: leaf
 router_id: 11.2.0.1
 
 interfaces:
-  - name: xe-0/0/0
-    unit:
-      - number: 0
-        address_family: inet
-        ip_address: 11.0.0.1/31
-        description: connecting to spine-01
-  - name: xe-0/0/1
-    unit:
-      - number: 0
-        address_family: inet
-        ip_address: 11.0.0.9/31
-        description: connecting to spine-02
-  - name: xe-0/0/2
-    unit:
-      - number: 0
-        address_family: ethernet-switching
-        interface-mode: access
-        vlan_members: 100
-        description: connecting to server-01
-  - name: xe-0/0/3
-    unit:
-      - number: 0
-        address_family: ethernet-switching
-        interface-mode: access
-        vlan_members: 100
-        description: connecting to server-02
-  - name: lo0
-    unit:
-      - number: 0
-        address_family: inet
-        ip_address: 11.2.0.1/32
-        description: loopback address
+  - name: xe-0/0/0.0
+    address_family: inet
+    ip_address: 11.0.0.1/31
+    description: connecting to spine-01
+  - name: xe-0/0/1.0
+    address_family: inet
+    ip_address: 11.0.0.9/31
+    description: connecting to spine-02
+  - name: xe-0/0/2.0
+    address_family: ethernet-switching
+    interface-mode: access
+    vlan_members: 100
+    description: connecting to server-01
+  - name: xe-0/0/3.0
+    address_family: ethernet-switching
+    interface-mode: access
+    vlan_members: 100
+    description: connecting to server-02
+  - name: lo0.0
+    address_family: inet
+    ip_address: 11.2.0.1/32
+    description: loopback address
 
 as: 66001
 underlay:

@@ -2,24 +2,18 @@
 role: leaf
 router_id: 11.2.0.4
 interfaces:
-  - name: xe-0/0/2
-    unit:
-      - number: 0
-        address_family: inet
-        ip_address: 11.0.0.15/31
-        description: connecting to spine-02
-  - name: xe-0/0/3
-    unit:
-      - number: 0
-        address_family: inet
-        ip_address: 11.0.0.7/31
-        description: connecting to spine-01
-  - name: lo0
-    unit:
-      - number: 0
-        address_family: inet
-        ip_address: 11.2.0.4/32
-        description: loopback address
+  - name: xe-0/0/2.0
+    address_family: inet
+    ip_address: 11.0.0.15/31
+    description: connecting to spine-02
+  - name: xe-0/0/3.0
+    address_family: inet
+    ip_address: 11.0.0.7/31
+    description: connecting to spine-01
+  - name: lo0.0
+    address_family: inet
+    ip_address: 11.2.0.4/32
+    description: loopback address
 
 as: 66004
 underlay:

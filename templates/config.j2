@@ -1,22 +1,21 @@
 #jinja2: lstrip_blocks: True
 interfaces {
   {% for interface in interfaces %}
-    {{ interface["name"] }} {
-      {% for unit in interface["unit"] %}
-        unit {{ unit["number"] }} {
-            family {{ unit["address_family"] }} {
-              {% if unit["address_family"] == "inet" %}
-                address {{ unit["ip_address"] }};
-              {% elif unit["address_family"] == "ethernet-switching" %}
-                interface-mode {{ unit["interface-mode"] }};
+    {% set list1 = interface["name"].split('.') %}
+    {{ list1[0] }} {
+        unit {{ list1[1] }} {
+            description "{{interface["description"] }}";
+            family {{ interface["address_family"] }} {
+              {% if interface["address_family"] == "inet" %}
+                address {{interface["ip_address"] }};
+              {% elif interface["address_family"] == "ethernet-switching" %}
+                interface-mode {{ interface["interface-mode"] }};
                 vlan {
-                    members {{ unit["vlan_members"] }};
+                    members {{ interface["vlan_members"] }};
                 }
               {% endif %}
-                description {{ unit["description"] }};
             }
         }
-      {% endfor %}
     }
   {% endfor %}
 }
