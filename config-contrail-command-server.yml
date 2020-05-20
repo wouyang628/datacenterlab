@@ -10,14 +10,19 @@
   tasks:
     - name: Install the latest version of Docker Engine
       yum:
-        name: "{{ packages }}"
+        name: "{{ item.package }}"
         state: present
-      vars:
-        packages:
-        - yum-utils
-        - device-mapper-persistent-data
-        - lvm2
-        - wget
+      with_items:
+        - { package: "yum-utils" }
+        - { package: "device-mapper-persistent-data" }
+        - { package: "lvm2" }
+        - { package: "wget" }
+        - { package: "epel-release" }
+        - { package: "python-pip" }
+
+    - name: install python docker
+      pip:
+        name: docker
 
     - name: set up the stable repository
       command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
@@ -66,8 +71,9 @@
       docker_login:
         registry: hub.juniper.net
         username: JNPR-FieldUser419
-        password: $6$mysecretsalt$8NZP8yYo9fECSxnmt6y3Z14Wyw/JFNu3jPKv7Mi9P6zglhgYX7f3EUMlRirqx4Jsvd/elUk6ijrcMyFQMjCWq.
+        password: TGbZvQ1QTcpPQtfYA0Rp
         state: present
 
     - name: execute the command to install
       command: docker run -td --net host -e action=provision_cluster -v /root/command_servers.yml:/command_servers.yml -v /root/instances.yml:/instances.yml --privileged --name contrail_command_deployer hub.juniper.net/contrail/contrail-command-deployer:2003.33
+   

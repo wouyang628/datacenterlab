@@ -1,7 +1,7 @@
 127.0.0.1   localhost.localdomain localhost
 ::1     localhost6.localdomain6 localhost6
-10.53.72.123    contrail-command
-10.53.72.122    aio-openstack-contrail
-10.53.72.12    contrail-compute
-10.53.72.119    appformix
-10.53.72.1    appformixflows
+10.53.64.100    contrail-command
+10.53.64.101    aio-openstack-contrail
+10.53.64.102    contrail-compute
+10.53.64.103    appformix
+10.53.69.243    appformixflows

@@ -5,7 +5,7 @@ user_command_volumes:
 - /opt/software/xflow:/opt/software/xflow
 command_servers:
     server1:
-        ip: 10.53.72.123
+        ip: 10.53.64.100
         connection: ssh
         ssh_user: root
         ssh_pass: c0ntrail123

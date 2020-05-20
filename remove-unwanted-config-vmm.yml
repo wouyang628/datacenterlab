@@ -1,0 +1,8 @@
+---
+- name: generate and install config
+  hosts:
+    - QFX
+  roles:
+    - Juniper.junos
+  connection: local
+  gather_facts: no

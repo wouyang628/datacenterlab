@@ -1,0 +1,22 @@
+---
+- name: generate and install config
+  hosts:
+    - QFX
+  roles:
+    - Juniper.junos
+  connection: local
+  gather_facts: no
+
+  vars:
+    connetion_settings:
+      host: "{{ ansible_host }}"
+      user: root
+      passwd: Embe1mpls
+
+  tasks:
+
+    - name: push config to device
+      juniper_junos_config:
+        provider: "{{ connetion_settings }}"
+        load: merge
+        src: "tmp/{{ inventory_hostname }}.conf"

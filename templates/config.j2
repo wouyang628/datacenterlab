@@ -58,6 +58,7 @@ protocols {
         }
     }
     {% if role == "leaf" %}
+    {% if vlans is defined %}
     evpn {
         vni-options {
             vni 100 {
@@ -68,6 +69,7 @@ protocols {
         multicast-mode ingress-replication;
         extended-vni-list all;
     }
+    {% endif %}
     {% endif %}
 }
 
@@ -82,31 +84,32 @@ policy-options {
         }
     }
     {% if role == "leaf" %}
+    {% if communities is defined %}
     policy-statement EVPN_VRF_IMPORT {
-        {% if communities is defined %}
-          {% for community in communities %}
+        {% for community in communities %}
         term {{ community["community_name"] }} {
             from community {{ community["community_name"] }};
             then accept;
         }
-          {% endfor %}
-        {% endif %}
+        {% endfor %}
     }
-    {% endif %}
-    {% if communities is defined %}
-      {% for community in communities %}
+    {% for community in communities %}
     community {{ community["community_name"] }} members {{ community["community_member"]}};
-      {% endfor %}
+    {% endfor %}
+    {% endif %}
     {% endif %}
 }
 
+{% if role == "leaf" %}
+{% if vlans is defined %}
 switch-options {
     vtep-source-interface lo0.0;
     route-distinguisher {{ router_id }}:1;
     vrf-import EVPN_VRF_IMPORT;
     vrf-target target:65000:2;
 }
-
+{% endif %}
+{% endif %}
 
 {% if vlans is defined %}
 vlans {

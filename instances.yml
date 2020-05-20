@@ -11,7 +11,7 @@ provider_config:
     domainsuffix: local
 instances:
   aio-openstack-contrail:
-    ip: 10.53.72.122
+    ip: 10.53.64.101
     ssh_user: root
     ssh_pwd: c0ntrail123
     provider: bms
@@ -26,7 +26,7 @@ instances:
       analytics_snmp:
       vrouter:
         TSN_EVPN_MODE: true
-        VROUTER_GATEWAY: 11.11.0.1
+        VROUTER_GATEWAY: 172.17.17.1
       openstack_control:
       openstack_network:
       openstack_storage:
@@ -34,18 +34,18 @@ instances:
       appformix_openstack_controller:
       appformix_bare_host:
   contrail-compute:
-    ip: 10.53.72.12
+    ip: 10.53.64.102
     ssh_user: root
     ssh_pwd: c0ntrail123
     provider: bms
     roles:
       vrouter:
-        VROUTER_GATEWAY: 11.11.0.1
+        VROUTER_GATEWAY: 172.17.17.1
       openstack_compute:
       appformix_compute:
       appformix_bare_host:
   appformix:
-    ip: 10.53.72.119
+    ip: 10.53.64.103
     ssh_user: root
     ssh_pwd: c0ntrail123
     provider: bms
@@ -54,17 +54,18 @@ instances:
       appformix_bare_host:
 contrail_configuration:
   CONTRAIL_VERSION: "2003.33"
+  UPGRADE_KERNEL: True
   CLOUD_ORCHESTRATOR: openstack
   RABBITMQ_NODE_PORT: 5673
-  VROUTER_GATEWAY: 11.11.0.1
+  VROUTER_GATEWAY: 172.17.17.1
   ENCAP_PRIORITY: VXLAN,MPLSoUDP,MPLSoGRE
   OPENSTACK_VERSION: queens
   AUTH_MODE: keystone
-  KEYSTONE_AUTH_HOST: 10.53.72.122
+  KEYSTONE_AUTH_HOST: 10.53.64.101
   KEYSTONE_AUTH_URL_VERSION: /v3
-  CONTROL_NODES: 172.16.16.12
+  CONTROL_NODES: 172.17.17.12
   PHYSICAL_INTERFACE: ens3f1
-  TSN_NODES: 172.16.16.12
+  TSN_NODES: 172.17.17.12
   CONTRAIL_CONTAINER_TAG: "2003.33"
 kolla_config:
   kolla_globals:
