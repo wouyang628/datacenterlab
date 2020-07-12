@@ -25,6 +25,11 @@ routing-options {
     autonomous-system {{ as }};
 }
 
+snmp {
+    community public {
+        authorization read-only;
+    }
+}
 
 protocols {
     bgp {
@@ -56,6 +61,11 @@ protocols {
             }
             {% endfor %}
         }
+    }
+    lldp {
+        {% for interface in lldp_interfaces %}
+        interface {{ interface["name"]}};
+        {% endfor %}
     }
     {% if role == "leaf" %}
     {% if vlans is defined %}

@@ -2,6 +2,10 @@
 role: leaf
 router_id: 11.2.0.3
 interfaces:
+  - name: xe-0/0/1.0
+    address_family: inet
+    ip_address: 172.15.15.113/24
+    description: private99
   - name: xe-0/0/2.0
     address_family: inet
     ip_address: 11.0.0.5/31
@@ -14,6 +18,10 @@ interfaces:
     address_family: inet
     ip_address: 11.2.0.3/32
     description: loopback address
+
+lldp_interfaces:
+  - name: xe-0/0/2
+  - name: xe-0/0/3
 
 as: 66003
 underlay:

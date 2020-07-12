@@ -3,17 +3,22 @@
   hosts:
     - SERVERS
   remote_user: root
-
+ 
   vars:
-    interface_config_file: "server_config/{{ inventory_hostname }}/ifcfg-ens3f1"
+    interface_config_file_dir: "server_config/{{ inventory_hostname }}"
     hosts_file: "server_config/hosts"
-
+ 
   tasks:
+#    - name: generate /etc/hosts file
+#      template:
+#        scr: "templates/hosts.j2"
+#        dest: "server_config/hosts"
+ 
     - name: config /etc/hosts
       copy:
         src: "{{ hosts_file }}"
-        dest: /etc/hosts     
-
+        dest: /etc/hosts    
+ 
     - name: allow PasswordAuthentication
       replace:
         path: /etc/ssh/sshd_config
@@ -22,22 +27,25 @@
         backup: yes
       notify:
         - restart sshd.service
-
+ 
     - name: change user password
       user:
         name: root
         password: $6$mysecretsalt$4SoXnWcDhsSfyVAMhoLNf6QorPl29ymaSiLknBkYP/ZaWBcbSdZm71a9rRIXHGaiiLYfHcUggT2SochddElUA1
-    
+   
     - name: config /etc/sysconfig/network-scripts
       copy:
-        src: "{{ interface_config_file }}"
-        dest: /etc/sysconfig/network-scripts/ifcfg-ens3f1
+        src: "{{ interface_config_file_dir }}/{{ item.interface }}"
+        dest: "/etc/sysconfig/network-scripts/{{ item.interface }}"
+      with_items:
+        - { interface: "ifcfg-ens3f1" }
+        - { interface: "ifcfg-ens3f3" }
       notify:
         - restart network
-
+ 
   handlers:
     - name: restart network
       service: name=network state=restarted
-
+ 
     - name: restart sshd.service
       systemd: name=sshd.service state=restarted

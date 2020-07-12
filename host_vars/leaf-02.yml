@@ -10,10 +10,18 @@ interfaces:
     address_family: inet
     ip_address: 11.0.0.3/31
     description: connecting to spine-01
+  - name: xe-0/0/3.0
+    address_family: inet
+    ip_address: 172.15.15.112/24
+    description: private99
   - name: lo0.0
     address_family: inet
     ip_address: 11.2.0.2/32
     description: loopback address
+
+lldp_interfaces:
+  - name: xe-0/0/0
+  - name: xe-0/0/1
 
 as: 66002
 underlay:

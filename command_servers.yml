@@ -5,7 +5,7 @@ user_command_volumes:
 - /opt/software/xflow:/opt/software/xflow
 command_servers:
     server1:
-        ip: 10.53.64.100
+        ip: 10.49.224.90
         connection: ssh
         ssh_user: root
         ssh_pass: c0ntrail123
@@ -14,7 +14,7 @@ command_servers:
 
         registry_insecure: false
         container_registry: hub.juniper.net/contrail
-        container_tag: 2003.33
+        container_tag: 2003.1.40
         container_registry_username: JNPR-FieldUser419
         container_registry_password: TGbZvQ1QTcpPQtfYA0Rp
         config_dir: /etc/contrail

@@ -16,12 +16,22 @@ interfaces:
     description: connecting to leaf-03
   - name: xe-0/0/3.0
     address_family: inet
-    ip_address: 11.0.0.2/31
+    ip_address: 11.0.0.6/31
     description: connecting to leaf-04
+  - name: xe-0/0/4.0
+    address_family: inet
+    ip_address: 172.15.15.101/24
+    description: private99
   - name: lo0.0
     address_family: inet
     ip_address: 11.1.0.1/32
     description: loopback address
+
+lldp_interfaces:
+  - name: xe-0/0/0
+  - name: xe-0/0/1
+  - name: xe-0/0/2
+  - name: xe-0/0/3
 
 as: 65001
 underlay:

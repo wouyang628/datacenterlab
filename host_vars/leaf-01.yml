@@ -21,10 +21,18 @@ interfaces:
     interface-mode: access
     vlan_members: 100
     description: connecting to server-02
+  - name: xe-0/0/4.0
+    address_family: inet
+    ip_address: 172.15.15.111/24
+    description: private99
   - name: lo0.0
     address_family: inet
     ip_address: 11.2.0.1/32
     description: loopback address
+
+lldp_interfaces:
+  - name: xe-0/0/0
+  - name: xe-0/0/1
 
 as: 66001
 underlay:

@@ -18,11 +18,21 @@ interfaces:
     address_family: inet
     ip_address: 11.0.0.12/31
     description: connecting to leaf-03
+  - name: xe-0/0/4.0
+    address_family: inet
+    ip_address: 172.15.15.102/24
+    description: private99
   - name: lo0.0
     address_family: inet
     ip_address: 11.1.0.2/32
     description: loopback address
 
+lldp_interfaces:
+  - name: xe-0/0/0
+  - name: xe-0/0/1
+  - name: xe-0/0/2
+  - name: xe-0/0/3
+  
 as: 65002
 underlay:
   protocols: ebgp

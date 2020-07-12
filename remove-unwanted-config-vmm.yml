@@ -1,8 +1,24 @@
 ---
-- name: generate and install config
+- name: remove unwanted config from original vmm pod config
   hosts:
     - QFX
   roles:
     - Juniper.junos
   connection: local
   gather_facts: no
+
+  vars:
+    connetion_settings:
+      host: "{{ ansible_host }}"
+      user: root
+      passwd: Embe1mpls
+
+  tasks:
+    - name: push config to device
+      juniper_junos_config:
+        provider: "{{ connetion_settings }}"
+        load: set
+        lines:
+          - delete groups global interfaces
+          - delete groups global routing-options router-id 
+          - delete groups global snmp interface
