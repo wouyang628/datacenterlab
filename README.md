@@ -276,7 +276,7 @@ Server:
 ```
 docker login hub.juniper.net --username JNPR-FieldUser419 --password TGbZvQ1QTcpPQtfYA0Rp
 docker pull hub.juniper.net/contrail/contrail-command-deployer:2003.1.40
-docker run -td --net host -v /root/command_servers.yml:/command_servers.yml --privileged --name contrail_command_deployer hub.juniper.net/contrail/contrail-command-deployer:2003.1.40
+docker run -td --net host -e action=provision_cluster -e orchestrator=openstack -v /root/command_servers.yml:/command_servers.yml --privileged --name contrail_command_deployer hub.juniper.net/contrail/contrail-command-deployer:2003.1.40
 docker logs -f --tail 100 contrail_command_deployer
 ```
 
